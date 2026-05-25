@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="理念チェック">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>経営理念チェック</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #0f0f1a;
+      color: #f0f0f0;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    /* ヘッダー */
+    .header {
+      background: linear-gradient(135deg, #1a1a3e 0%, #2d1b69 100%);
+      padding: 20px 16px 18px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .header h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #ffffff;
+      margin-bottom: 14px;
+      background: rgba(255,255,255,0.12);
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+    }
+
+    .philosophy-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .philosophy-list li {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(167,139,250,0.4);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .philosophy-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #a78bfa;
+      color: #000;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .philosophy-text {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      text-shadow: 0 1px 8px rgba(167,139,250,0.4);
+    }
+
+    /* モード切替タブ */
+    .tab-wrapper {
+      display: flex;
+      background: #1a1a2e;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px 8px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      color: #a78bfa;
+      border-bottom-color: #a78bfa;
+    }
+
+    .tab-icon {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 3px;
+    }
+
+    /* コンテンツ */
+    .content {
+      padding: 16px;
+    }
+
+    .mode-panel {
+      display: none;
+    }
+
+    .mode-panel.active {
+      display: block;
+    }
+
+    /* 理念バナー */
+    .philosophy-banner {
+      background: linear-gradient(135deg, #2d1b69, #1e3a5f);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(167, 139, 250, 0.3);
+    }
+
+    .philosophy-banner .label {
+      font-size: 10px;
+      color: rgba(167,139,250,0.8);
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .philosophy-banner .text {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* セクション */
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+      padding-left: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 12px;
+      background: #a78bfa;
+      border-radius: 2px;
+    }
+
+    /* チェックアイテム */
+    .check-item {
+      background: #1e1e32;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .check-item:active {
+      transform: scale(0.98);
+    }
+
+    .check-item.checked {
+      background: #1a2e1a;
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+
+    .check-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      margin-top: 1px;
+    }
+
+    .check-item.checked .check-circle {
+      background: #4ade80;
+      border-color: #4ade80;
+    }
+
+    .check-mark {
+      display: none;
+      color: #000;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .check-item.checked .check-mark {
+      display: block;
+    }
+
+    .check-text {
+      flex: 1;
+    }
+
+    .check-main {
+      font-size: 14px;
+      color: #f0f0f0;
+      line-height: 1.5;
+      transition: color 0.2s;
+    }
+
+    .check-item.checked .check-main {
+      color: rgba(255,255,255,0.5);
+      text-decoration: line-through;
+      text-decoration-color: rgba(255,255,255,0.2);
+    }
+
+    .check-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .check-item.checked .check-sub {
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* 結果バナー */
+    .result-banner {
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 24px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .result-banner.ok {
+      background: linear-gradient(135deg, #14532d, #166534);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+    }
+
+    .result-banner.ng {
+      background: linear-gradient(135deg, #1f2937, #111827);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .result-icon {
+      font-size: 32px;
+      margin-bottom: 6px;
+    }
+
+    .result-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .result-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .result-progress {
+      font-size: 22px;
+      font-weight: 700;
+      color: #4ade80;
+      margin-top: 8px;
+    }
+
+    .result-banner.ng .result-progress {
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* 行動指針 */
+    .principle-block {
+      background: #1e1e32;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .principle-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #a78bfa;
+      color: #000;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .principle-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .principle-ng, .principle-ok {
+      margin-bottom: 10px;
+    }
+
+    .ng-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f87171;
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .ok-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #4ade80;
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .principle-ng ul, .principle-ok ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .principle-ng ul li, .principle-ok ul li {
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.8);
+      padding: 4px 0 4px 14px;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .principle-ng ul li:last-child, .principle-ok ul li:last-child {
+      border-bottom: none;
+    }
+
+    .principle-ng ul li::before {
+      content: '×';
+      position: absolute;
+      left: 0;
+      color: #f87171;
+      font-size: 11px;
+      top: 5px;
+    }
+
+    .principle-ok ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #a78bfa;
+      font-size: 11px;
+      top: 5px;
+    }
+
+    .principle-quote {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(167,139,250,0.1);
+      border-left: 3px solid #a78bfa;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    .principle-summary {
+      background: #1e1e32;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(167,139,250,0.2);
+    }
+
+    .summary-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #a78bfa;
+      margin-bottom: 12px;
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .summary-table th {
+      background: rgba(167,139,250,0.15);
+      color: rgba(255,255,255,0.7);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .summary-table td {
+      padding: 9px 10px;
+      color: rgba(255,255,255,0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .summary-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .summary-table td:first-child {
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      width: 30%;
+    }
+
+    /* リセットボタン */
+    .reset-btn {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reset-btn:active {
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* ホーム追加ガイド */
+    .guide-card {
+      background: #1a1a2e;
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .guide-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #a78bfa;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .guide-step {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #a78bfa;
+      color: #000;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.5;
+    }
+
+    .step-text strong {
+      color: #fff;
+    }
+
+    .os-label {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .ios-label { background: #1c3a5e; color: #60a5fa; }
+    .android-label { background: #1a3a1a; color: #4ade80; }
+
+    .os-section { margin-bottom: 14px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>i-consulting office 経営理念</h1>
+  <ul class="philosophy-list">
+    <li>
+      <div class="philosophy-num">1</div>
+      <div class="philosophy-text">顧客の成功が先、自分の利益が後</div>
+    </li>
+    <li>
+      <div class="philosophy-num">2</div>
+      <div class="philosophy-text">社長も社員も会社が楽しいと思える職場づくりのお手伝い</div>
+    </li>
+  </ul>
+</div>
+
+<!-- モード切替 -->
+<div class="tab-wrapper">
+  <button class="tab-btn active" onclick="switchMode('morning')" id="tab-morning">
+    <span class="tab-icon">🌅</span>朝の確認
+  </button>
+  <button class="tab-btn" onclick="switchMode('meeting')" id="tab-meeting">
+    <span class="tab-icon">🤝</span>面談・提案前
+  </button>
+  <button class="tab-btn" onclick="switchMode('principle')" id="tab-principle">
+    <span class="tab-icon">📖</span>行動指針
+  </button>
+  <button class="tab-btn" onclick="switchMode('guide')" id="tab-guide">
+    <span class="tab-icon">📱</span>使い方
+  </button>
+</div>
+
+<div class="content">
+
+  <!-- 朝の確認モード -->
+  <div class="mode-panel active" id="panel-morning">
+
+    <div class="philosophy-banner">
+      <div class="label">TODAY'S MINDSET</div>
+      <div class="text">今日の仕事は、誰の成功につながるか？</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">営業・提案</div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">初回面談は「聴く」に徹する</div>
+          <div class="check-sub">課題が見えるまで提案しない</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">「今すぐ私が必要か」を正直に伝える</div>
+          <div class="check-sub">必要でなければそう言う勇気を持つ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">財務・DX支援</div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">数字の先にある「経営者の想い」を聴く</div>
+          <div class="check-sub">数字を見せて終わりにしない</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">「現場が今、何に一番時間を取られているか」から始める</div>
+          <div class="check-sub">ツールや技術の話を先にしない</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">研修・セミナー</div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">受講者が「明日から何をするか」を持ち帰れる内容にする</div>
+          <div class="check-sub">自分の知識を披露する場ではない</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">顧問・継続支援</div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">「先月の約束はどうなりましたか」と必ず確認する</div>
+          <div class="check-sub">依存させるのではなく自走を目指す</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-banner ng" id="result-morning">
+      <div class="result-icon">📋</div>
+      <div class="result-title">確認中</div>
+      <div class="result-progress" id="progress-morning">0 / 6</div>
+      <div class="result-sub">全項目をチェックして今日をスタート</div>
+    </div>
+
+    <button class="reset-btn" onclick="resetPanel('panel-morning', 'result-morning', 'progress-morning', 6)">
+      リセット
+    </button>
+  </div>
+
+  <!-- 面談・提案前モード -->
+  <div class="mode-panel" id="panel-meeting">
+
+    <div class="philosophy-banner">
+      <div class="label">PRE-MEETING CHECK</div>
+      <div class="text">この面談で、相手の何を解決するか？</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">面談準備</div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">「この会社に今必要なのは何か」を先に言語化した</div>
+          <div class="check-sub">自分が担えるかはその後で考える</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">売り込みたいサービスから入らない</div>
+          <div class="check-sub">課題が見えるまで提案しない</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">後継者・2代目支援の場合</div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">先代との板挟みで苦しむ「感情」を先に受け止める</div>
+          <div class="check-sub">数字や計画より先に感情を聴く</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">「あなたはどんな会社にしたいか」を聴いた</div>
+          <div class="check-sub">正解を教える先生ではなくパートナーとして</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">提案・フィー提示</div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">顧問フィーの話はクライアントが「価値がある」と感じてから</div>
+          <div class="check-sub">早期に顧問契約に結びつけようとしない</div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">「この段階ではまだコンサルより〇〇が先」と言える準備がある</div>
+          <div class="check-sub">正直に伝える勇気が長期信頼につながる</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">面談後のフォロー確認</div>
+      <div class="check-item" onclick="toggle(this)">
+        <div class="check-circle"><span class="check-mark">✓</span></div>
+        <div class="check-text">
+          <div class="check-main">導入後に現場が楽になっているかをフォローする</div>
+          <div class="check-sub">使いこなせないツールを売って終わりにしない</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-banner ng" id="result-meeting">
+      <div class="result-icon">🤝</div>
+      <div class="result-title">確認中</div>
+      <div class="result-progress" id="progress-meeting">0 / 7</div>
+      <div class="result-sub">全項目チェックで面談に臨む</div>
+    </div>
+
+    <button class="reset-btn" onclick="resetPanel('panel-meeting', 'result-meeting', 'progress-meeting', 7)">
+      リセット
+    </button>
+  </div>
+
+  <!-- 行動指針 -->
+  <div class="mode-panel" id="panel-principle">
+
+    <div class="philosophy-banner">
+      <div class="label">ACTION GUIDELINES</div>
+      <div class="text">「顧客の成功が先」を実践するための行動指針</div>
+    </div>
+
+    <div class="principle-block">
+      <div class="principle-num">1</div>
+      <div class="principle-title">提案・営業の場面</div>
+      <div class="principle-ng">
+        <div class="ng-label">⚠️ やりがちなNG行動</div>
+        <ul>
+          <li>自分が得意なサービスを先に売り込む</li>
+          <li>顧問契約に早く結びつけようとする</li>
+        </ul>
+      </div>
+      <div class="principle-ok">
+        <div class="ok-label">✅ 理念に即した行動</div>
+        <ul>
+          <li>初回面談は「聴く」に徹する。課題が見えるまで提案しない</li>
+          <li>「今すぐ私が必要か」を正直に伝える。必要でなければそう言う</li>
+          <li>「この会社に今必要なのは何か」を先に言語化してから、自分が担えるかを考える</li>
+        </ul>
+      </div>
+      <div class="principle-quote">「この段階ではまだコンサルより〇〇が先だと思います」と言える勇気が、長期信頼につながります。</div>
+    </div>
+
+    <div class="principle-block">
+      <div class="principle-num">2</div>
+      <div class="principle-title">お金のブロックパズルを使った財務支援</div>
+      <div class="principle-ok">
+        <div class="ok-label">✅ 理念に即した使い方</div>
+        <ul>
+          <li>数字を見せて終わりにしない。「この数字が意味することは何か」を経営者と一緒に考える</li>
+          <li>改善提案は「社長がやりたいこと」と「財務的に必要なこと」を紐づけて説明する</li>
+          <li>顧問フィーの話は、クライアントが「これは価値がある」と感じてから切り出す</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="principle-block">
+      <div class="principle-num">3</div>
+      <div class="principle-title">DX・AI支援の場面</div>
+      <div class="principle-ng">
+        <div class="ng-label">⚠️ やりがちなNG行動</div>
+        <ul>
+          <li>ツールや技術の話を先にする</li>
+          <li>「AIを使えば便利になります」で終わる</li>
+        </ul>
+      </div>
+      <div class="principle-ok">
+        <div class="ok-label">✅ 理念に即した行動</div>
+        <ul>
+          <li>「社長や社員が今、何に一番時間を取られているか」から始める</li>
+          <li>導入後に現場が楽になっているかをフォローアップする</li>
+          <li>使いこなせないツールを売って終わりにしない</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="principle-block">
+      <div class="principle-num">4</div>
+      <div class="principle-title">研修・セミナーの場面</div>
+      <div class="principle-ok">
+        <div class="ok-label">✅ 理念に即した設計</div>
+        <ul>
+          <li>受講者が「明日から何をするか」を持ち帰れる内容にする</li>
+          <li>自分の知識を披露する場ではなく、参加者の行動変容を起こす場と捉える</li>
+          <li>アンケートで「良かった」より「何を変えるか」を聞く設問を入れる</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="principle-block">
+      <div class="principle-num">5</div>
+      <div class="principle-title">継続支援・顧問の場面</div>
+      <div class="principle-ok">
+        <div class="ok-label">✅ 理念に即した行動</div>
+        <ul>
+          <li>毎月の訪問で「先月の約束はどうなりましたか」と必ず聞く</li>
+          <li>クライアントの成果が出たら、それを一緒に言語化して自信にさせる</li>
+          <li>依存させるのではなく、最終的には自走できる状態を目指す</li>
+        </ul>
+      </div>
+      <div class="principle-quote">「私がいなくても大丈夫な状態にする」ことが最大の顧客貢献であり、それが口コミ・紹介につながります。</div>
+    </div>
+
+    <div class="principle-block">
+      <div class="principle-num">6</div>
+      <div class="principle-title">後継者・2代目支援（差別化ニッチ）</div>
+      <div class="principle-ok">
+        <div class="ok-label">✅ この領域は特にこの理念が活きます</div>
+        <ul>
+          <li>先代との板挟みで苦しんでいる2代目の「感情」を先に受け止める</li>
+          <li>数字や計画より先に「あなたはどんな会社にしたいか」を聴く</li>
+          <li>正解を教える先生ではなく、一緒に考えるパートナーとして関わる</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="principle-summary">
+      <div class="summary-title">まとめ</div>
+      <table class="summary-table">
+        <thead>
+          <tr><th>場面</th><th>「顧客の成功が先」の実践</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>営業</td><td>売り込む前に課題を聴き切る</td></tr>
+          <tr><td>財務支援</td><td>数字の先にある経営者の想いと紐づける</td></tr>
+          <tr><td>DX・AI支援</td><td>現場が楽になっているかフォローする</td></tr>
+          <tr><td>研修</td><td>知識より行動変容を設計する</td></tr>
+          <tr><td>顧問</td><td>依存でなく自走を目指す</td></tr>
+          <tr><td>後継者支援</td><td>感情を先に受け止める</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- 使い方（ホーム追加ガイド） -->
+  <div class="mode-panel" id="panel-guide">
+
+    <div class="philosophy-banner">
+      <div class="label">DAILY ROUTINE</div>
+      <div class="text">仕組みにすれば、意識しなくても実践できる</div>
+    </div>
+
+    <div class="guide-card">
+      <div class="guide-title">📱 このページをホーム画面に追加する方法</div>
+
+      <div class="os-section">
+        <div class="os-label ios-label">iPhone / iPad（Safari）</div>
+        <div class="guide-step">
+          <div class="step-num">1</div>
+          <div class="step-text">SafariでこのHTMLファイルを開く</div>
+        </div>
+        <div class="guide-step">
+          <div class="step-num">2</div>
+          <div class="step-text">画面下の<strong>「共有ボタン」（四角から矢印が出るマーク）</strong>をタップ</div>
+        </div>
+        <div class="guide-step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>「ホーム画面に追加」</strong>をタップ</div>
+        </div>
+        <div class="guide-step">
+          <div class="step-num">4</div>
+          <div class="step-text">名前を「理念チェック」などに変更して<strong>「追加」</strong>をタップ</div>
+        </div>
+      </div>
+
+      <div class="os-section">
+        <div class="os-label android-label">Android（Chrome）</div>
+        <div class="guide-step">
+          <div class="step-num">1</div>
+          <div class="step-text">ChromeでこのHTMLファイルを開く</div>
+        </div>
+        <div class="guide-step">
+          <div class="step-num">2</div>
+          <div class="step-text">右上の<strong>「⋮（メニュー）」</strong>をタップ</div>
+        </div>
+        <div class="guide-step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>「ホーム画面に追加」</strong>をタップ</div>
+        </div>
+        <div class="guide-step">
+          <div class="step-num">4</div>
+          <div class="step-text">名前を確認して<strong>「追加」</strong>をタップ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="guide-card" style="margin-top:12px;">
+      <div class="guide-title">💡 2つのモードの使い方</div>
+      <div class="guide-step">
+        <div class="step-num">🌅</div>
+        <div class="step-text"><strong>朝の確認</strong>：毎朝1〜2分。その日の仕事が理念に沿っているか自問する</div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">🤝</div>
+        <div class="step-text"><strong>面談・提案前</strong>：クライアントと会う直前に必ずチェック。全項目に入れてから商談へ</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // モード切替
+  function switchMode(mode) {
+    document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + mode).classList.add('active');
+    document.getElementById('tab-' + mode).classList.add('active');
+  }
+
+  // チェック切替
+  function toggle(item) {
+    item.classList.toggle('checked');
+    updateResult(item.closest('.mode-panel'));
+  }
+
+  // 結果更新
+  function updateResult(panel) {
+    var items = panel.querySelectorAll('.check-item');
+    var checked = panel.querySelectorAll('.check-item.checked').length;
+    var total = items.length;
+
+    var resultEl = panel.querySelector('.result-banner');
+    var progressEl = panel.querySelector('[id^="progress-"]');
+
+    progressEl.textContent = checked + ' / ' + total;
+
+    if (checked === total) {
+      resultEl.className = 'result-banner ok';
+      resultEl.querySelector('.result-icon').textContent = '✅';
+      resultEl.querySelector('.result-title').textContent = '理念に即しています';
+      resultEl.querySelector('.result-sub').textContent = '今日も顧客の成功のために動ける状態です';
+    } else {
+      resultEl.className = 'result-banner ng';
+      resultEl.querySelector('.result-icon').textContent = checked > 0 ? '📋' : '📋';
+      resultEl.querySelector('.result-title').textContent = '確認中';
+      resultEl.querySelector('.result-sub').textContent = '残り ' + (total - checked) + ' 項目';
+    }
+  }
+
+  // リセット
+  function resetPanel(panelId, resultId, progressId, total) {
+    var panel = document.getElementById(panelId);
+    panel.querySelectorAll('.check-item').forEach(function(item) {
+      item.classList.remove('checked');
+    });
+
+    var resultEl = document.getElementById(resultId);
+    resultEl.className = 'result-banner ng';
+    resultEl.querySelector('.result-icon').textContent = '📋';
+    resultEl.querySelector('.result-title').textContent = '確認中';
+    resultEl.querySelector('.result-progress').textContent = '0 / ' + total;
+    resultEl.querySelector('.result-sub').textContent = panel.id === 'panel-morning'
+      ? '全項目をチェックして今日をスタート'
+      : '全項目チェックで面談に臨む';
+  }
+</script>
+
+</body>
+</html>
